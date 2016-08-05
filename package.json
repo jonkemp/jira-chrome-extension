@@ -1,0 +1,14 @@
+{
+  "name": "jira-chrome-extension",
+  "version": "1.0.0",
+  "description": "Open a list of JIRA issues in new tabs in Chrome.",
+  "main": "manifest.json",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan Kemp",
+  "license": "MIT"
+}
