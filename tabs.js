@@ -24,26 +24,23 @@
 }(function(window, chrome) {
 
   var openJIRAinNewTabs = window.openJIRAinNewTabs = function() {
-    var urlPrefix = 'https://sni-digital.atlassian.net/browse/',
-      input = window.prompt('Please enter the JIRA ticket number or numbers:'),
-      value;
+    var input = window.prompt('Please enter the JIRA ticket number or numbers:');
+
+    function getPath(path) {
+      var urlPrefix = 'https://sni-digital.atlassian.net/browse/',
+          validPath = path.trim();
+
+      return urlPrefix + validPath;
+    }
 
     function newTab(path) {
-      var validPath = path.trim();
-
-      chrome.tabs.create({url: urlPrefix + validPath});
+      chrome.tabs.create({url: getPath(path)});
     }
 
     if (/,/.test(input)) {
-      value = input.split(',');
+      input.split(',').forEach(newTab);
     } else {
-      value = input;
-    }
-
-    if (typeof value === 'string') {
       newTab(input);
-    } else if (Array.isArray(value)) {
-      value.forEach(newTab);
     }
   }
 
