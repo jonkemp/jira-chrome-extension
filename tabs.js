@@ -1,5 +1,3 @@
-/* globals chrome */
-
 'use strict';
 
 (function(factory) {
@@ -42,7 +40,7 @@
     } else {
       newTab(input);
     }
-  }
+  };
 
   // Called when the user clicks on the browser action.
   chrome.browserAction.onClicked.addListener(openJIRAinNewTabs);
