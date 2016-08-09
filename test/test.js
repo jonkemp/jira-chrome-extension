@@ -29,6 +29,15 @@ describe('jira-chrome-extension', function() {
       assert.ok(global.chrome.tabs.create.calledWith({url:'https://sni-digital.atlassian.net/browse/ABCDE'}));
     });
 
+    it('should strip whitespace from input', function() {
+      global.prompt = sinon.stub().returns(' ABCDE');
+
+      var openJIRAinNewTabs = global.openJIRAinNewTabs();
+
+      assert.ok(global.chrome.tabs.create.calledOnce);
+      assert.ok(global.chrome.tabs.create.calledWith({url:'https://sni-digital.atlassian.net/browse/ABCDE'}));
+    });
+
     it('should work with a comma separated list', function() {
       global.prompt = sinon.stub().returns('ABCDEFG,HIJKLMNOP');
 
