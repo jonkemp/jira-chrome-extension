@@ -7,14 +7,16 @@
     "test": "test"
   },
   "scripts": {
-    "test": "mocha",
+    "test": "node test/test | node_modules/.bin/tap-spec",
     "lint": "eslint tabs.js"
   },
   "author": "Jonathan Kemp",
+  "repository": "jonkemp/jira-chrome-extension",
   "license": "MIT",
   "devDependencies": {
     "eslint": "^3.2.2",
-    "mocha": "^3.0.1",
-    "sinon": "^1.17.5"
+    "sinon": "^1.17.5",
+    "tap-spec": "^4.1.1",
+    "tape": "^4.6.0"
   }
 }

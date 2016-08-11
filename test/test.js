@@ -1,43 +1,43 @@
 /* eslint-disable */
 
-var assert = require('assert'),
+var test = require('tape'),
     sinon = require('sinon'),
     tabs = require('../tabs');
 
-describe('jira-chrome-extension', function() {
-  describe('#openJIRAinNewTabs()', function() {
-    it('should call window.prompt and return the expected output', function() {
-      global.prompt = sinon.stub().returns('ABCDE');
+test('should call window.prompt and return the expected output', function(assert) {
+  global.prompt = sinon.stub().returns('ABCDE');
 
-      var idsFromPrompt = global.jiraChromeExt.getIDsFromPrompt();
+  var idsFromPrompt = global.jiraChromeExt.getIDsFromPrompt();
 
-      assert.equal(global.prompt.calledOnce, true);
-      assert.equal(global.prompt.getCall(0).args[0], 'Please enter the JIRA ticket number or numbers:');
-      assert.deepEqual(idsFromPrompt, ['ABCDE']);
+  assert.equal(global.prompt.calledOnce, true, 'Expect prompt to be called once');
+  assert.equal(global.prompt.getCall(0).args[0], 'Please enter the JIRA ticket number or numbers:', 'Expect prompt to be called with this message');
+  assert.deepEqual(idsFromPrompt, ['ABCDE'], 'Expect an array with the correct value');
+  assert.end();
 
-      global.prompt.reset();
-    });
+  global.prompt.reset();
+});
 
-    it('should return the correct path', function() {
-      var path = global.jiraChromeExt.getPath('ABCDE');
+test('should return the correct path', function(assert) {
+  var path = global.jiraChromeExt.getPath('ABCDE');
 
-      assert.equal(path, 'https://sni-digital.atlassian.net/browse/ABCDE');
-    });
+  assert.equal(path, 'https://sni-digital.atlassian.net/browse/ABCDE', 'Expect the correct JIRA url');
+  assert.end();
+});
 
-    it('should strip whitespace from input', function() {
-      var path = global.jiraChromeExt.getPath(' ABCDE');
+test('should strip whitespace from input', function(assert) {
+  var path = global.jiraChromeExt.getPath(' ABCDE');
 
-      assert.equal(path, 'https://sni-digital.atlassian.net/browse/ABCDE');
-    });
+  assert.equal(path, 'https://sni-digital.atlassian.net/browse/ABCDE', 'Expect the correct JIRA url');
+  assert.end();
+});
 
-    it('should work with a comma separated list', function() {
-      global.prompt = sinon.stub().returns('ABCDEFG,HIJKLMNOP');
+test('should work with a comma separated list', function(assert) {
+  global.prompt = sinon.stub().returns('ABCDEFG,HIJKLMNOP');
 
-      var idsFromPrompt = global.jiraChromeExt.getIDsFromPrompt();
+  var idsFromPrompt = global.jiraChromeExt.getIDsFromPrompt();
 
-      assert.deepEqual(idsFromPrompt, ['ABCDEFG', 'HIJKLMNOP']);
+  assert.deepEqual(idsFromPrompt, ['ABCDEFG', 'HIJKLMNOP'], 'Expect an array with the correct value');
+  assert.end();
 
-      global.prompt.reset();
-    });
-  });
+  global.prompt.reset();
 });
