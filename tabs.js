@@ -2,16 +2,16 @@
 
 (function(factory) {
   if (typeof module === 'object' && typeof module.exports === 'object') {
-    var sinon = require('sinon');
+    var noop = function() {};
 
     global.chrome = {
       browserAction: {
         onClicked: {
-          addListener: sinon.stub()
+          addListener: noop
         }
       },
       tabs: {
-        create: sinon.stub()
+        create: noop
       }
     };
 
@@ -21,28 +21,44 @@
   }
 }(function(window, chrome) {
 
-  var openJIRAinNewTabs = window.openJIRAinNewTabs = function() {
-    var input = window.prompt('Please enter the JIRA ticket number or numbers:');
-
-    function getPath(path) {
-      var urlPrefix = 'https://sni-digital.atlassian.net/browse/',
-          validPath = path.trim();
-
-      return urlPrefix + validPath;
-    }
-
-    function newTab(path) {
-      chrome.tabs.create({url: getPath(path)});
-    }
+  function getIDsFromPrompt() {
+    var ids,
+        input = window.prompt('Please enter the JIRA ticket number or numbers:');
 
     if (/,/.test(input)) {
-      input.split(',').forEach(newTab);
+      ids = input.split(',');
     } else {
-      newTab(input);
+      ids = [ input ];
     }
-  };
+
+    return ids;
+  }
+
+  function getPath(id) {
+    var urlPrefix = 'https://sni-digital.atlassian.net/browse/',
+        validId = id.trim();
+
+    return urlPrefix + validId;
+  }
+
+  function newTab(url) {
+    chrome.tabs.create({ url: url });
+  }
+
+  function openJIRAinNewTabs() {
+    var jiraIds = getIDsFromPrompt(),
+        jiraURLs = jiraIds.map(getPath);
+
+    jiraURLs.forEach(newTab);
+  }
 
   // Called when the user clicks on the browser action.
   chrome.browserAction.onClicked.addListener(openJIRAinNewTabs);
 
+  window.jiraChromeExt = {
+    getIDsFromPrompt: getIDsFromPrompt,
+    getPath: getPath,
+    newTab: newTab,
+    openJIRAinNewTabs: openJIRAinNewTabs
+  };
 }));
