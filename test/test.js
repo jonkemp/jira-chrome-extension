@@ -18,34 +18,34 @@ describe('jira-chrome-extension', function() {
     it('should call window.prompt with expected message', function() {
       global.openJIRAinNewTabs();
 
-      assert.ok(global.prompt.calledOnce);
-      assert.ok(global.prompt.calledWith('Please enter the JIRA ticket number or numbers:'));
+      assert.equal(global.prompt.calledOnce, true);
+      assert.equal(global.prompt.getCall(0).args[0], 'Please enter the JIRA ticket number or numbers:');
     });
 
     it('should call newTab with expected input', function() {
-      var openJIRAinNewTabs = global.openJIRAinNewTabs();
+      global.openJIRAinNewTabs();
 
-      assert.ok(global.chrome.tabs.create.calledOnce);
-      assert.ok(global.chrome.tabs.create.calledWith({url:'https://sni-digital.atlassian.net/browse/ABCDE'}));
+      assert.equal(global.chrome.tabs.create.calledOnce, true);
+      assert.deepEqual(global.chrome.tabs.create.getCall(0).args[0], {url:'https://sni-digital.atlassian.net/browse/ABCDE'});
     });
 
     it('should strip whitespace from input', function() {
       global.prompt = sinon.stub().returns(' ABCDE');
 
-      var openJIRAinNewTabs = global.openJIRAinNewTabs();
+      global.openJIRAinNewTabs();
 
-      assert.ok(global.chrome.tabs.create.calledOnce);
-      assert.ok(global.chrome.tabs.create.calledWith({url:'https://sni-digital.atlassian.net/browse/ABCDE'}));
+      assert.equal(global.chrome.tabs.create.calledOnce, true);
+      assert.deepEqual(global.chrome.tabs.create.getCall(0).args[0], {url:'https://sni-digital.atlassian.net/browse/ABCDE'});
     });
 
     it('should work with a comma separated list', function() {
       global.prompt = sinon.stub().returns('ABCDEFG,HIJKLMNOP');
 
-      var openJIRAinNewTabs = global.openJIRAinNewTabs();
+      global.openJIRAinNewTabs();
 
       assert.equal(global.chrome.tabs.create.callCount, 2);
-      assert.ok(global.chrome.tabs.create.getCall(0).calledWith({url:'https://sni-digital.atlassian.net/browse/ABCDEFG'}));
-      assert.ok(global.chrome.tabs.create.getCall(1).calledWith({url:'https://sni-digital.atlassian.net/browse/HIJKLMNOP'}));
+      assert.deepEqual(global.chrome.tabs.create.getCall(0).args[0], {url:'https://sni-digital.atlassian.net/browse/ABCDEFG'});
+      assert.deepEqual(global.chrome.tabs.create.getCall(1).args[0], {url:'https://sni-digital.atlassian.net/browse/HIJKLMNOP'});
     });
   });
 });
