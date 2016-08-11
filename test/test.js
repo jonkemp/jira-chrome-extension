@@ -5,47 +5,39 @@ var assert = require('assert'),
     tabs = require('../tabs');
 
 describe('jira-chrome-extension', function() {
-  beforeEach(function() {
-    global.prompt = sinon.stub().returns('ABCDE');
-  });
-
-  afterEach(function() {
-    global.prompt.reset();
-    global.chrome.tabs.create.reset();
-  });
-
   describe('#openJIRAinNewTabs()', function() {
-    it('should call window.prompt with expected message', function() {
-      global.openJIRAinNewTabs();
+    it('should call window.prompt and return the expected output', function() {
+      global.prompt = sinon.stub().returns('ABCDE');
+
+      var idsFromPrompt = global.jiraChromeExt.getIDsFromPrompt();
 
       assert.equal(global.prompt.calledOnce, true);
       assert.equal(global.prompt.getCall(0).args[0], 'Please enter the JIRA ticket number or numbers:');
+      assert.deepEqual(idsFromPrompt, ['ABCDE']);
+
+      global.prompt.reset();
     });
 
-    it('should call newTab with expected input', function() {
-      global.openJIRAinNewTabs();
+    it('should return the correct path', function() {
+      var path = global.jiraChromeExt.getPath('ABCDE');
 
-      assert.equal(global.chrome.tabs.create.calledOnce, true);
-      assert.deepEqual(global.chrome.tabs.create.getCall(0).args[0], {url:'https://sni-digital.atlassian.net/browse/ABCDE'});
+      assert.equal(path, 'https://sni-digital.atlassian.net/browse/ABCDE');
     });
 
     it('should strip whitespace from input', function() {
-      global.prompt = sinon.stub().returns(' ABCDE');
+      var path = global.jiraChromeExt.getPath(' ABCDE');
 
-      global.openJIRAinNewTabs();
-
-      assert.equal(global.chrome.tabs.create.calledOnce, true);
-      assert.deepEqual(global.chrome.tabs.create.getCall(0).args[0], {url:'https://sni-digital.atlassian.net/browse/ABCDE'});
+      assert.equal(path, 'https://sni-digital.atlassian.net/browse/ABCDE');
     });
 
     it('should work with a comma separated list', function() {
       global.prompt = sinon.stub().returns('ABCDEFG,HIJKLMNOP');
 
-      global.openJIRAinNewTabs();
+      var idsFromPrompt = global.jiraChromeExt.getIDsFromPrompt();
 
-      assert.equal(global.chrome.tabs.create.callCount, 2);
-      assert.deepEqual(global.chrome.tabs.create.getCall(0).args[0], {url:'https://sni-digital.atlassian.net/browse/ABCDEFG'});
-      assert.deepEqual(global.chrome.tabs.create.getCall(1).args[0], {url:'https://sni-digital.atlassian.net/browse/HIJKLMNOP'});
+      assert.deepEqual(idsFromPrompt, ['ABCDEFG', 'HIJKLMNOP']);
+
+      global.prompt.reset();
     });
   });
 });
